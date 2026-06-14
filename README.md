@@ -1,65 +1,75 @@
 # Autograd Engine From Scratch
 
-A NumPy-based reverse-mode autodiff engine and tiny neural network library built to make
-backpropagation inspectable from scalar operations through complete training loops.
+A compact NumPy-based reverse-mode autodiff engine and neural network library built from
+first principles. The project covers scalar and tensor computation graphs, broadcasting-aware
+gradients, MLP and CNN layers, optimizers, losses, data loading, serialization, gradient
+checking, and deterministic end-to-end experiments.
 
 ## Features
 
-- [x] Scalar and NumPy-backed tensor computation graphs
-- [x] Broadcasting-aware gradients, reductions, matrix multiplication, and nonlinearities
-- [x] Modules, parameters, linear layers, activations, sequential models, and MLPs
-- [x] SGD, momentum SGD, and Adam
-- [x] Regression, binary classification, and multiclass losses
+- [x] Scalar and NumPy tensor reverse-mode autodiff
+- [x] Broadcasting, reductions, matrix multiplication, reshape, and transpose gradients
+- [x] `Linear`, activations, `MLP`, `Conv2D`, `MaxPool2D`, and `Flatten`
+- [x] SGD, momentum SGD, Adam, regression and classification losses
+- [x] DataLoader, train/evaluation loops, metrics, and `.npz` model serialization
 - [x] Central finite-difference gradient checks
-- [x] Seeded mini-batch data loading and reusable train/evaluation loops
-- [x] Binary and multiclass accuracy metrics
-- [x] Deterministic model state dictionaries and NumPy `.npz` persistence
-- [x] Deterministic regression, XOR, and spiral experiments
-- [x] MNIST IDX loading and a subset-based MLP image classifier
-- [x] Reshape/transpose autograd plus readable `Conv2D`, `MaxPool2D`, and `Flatten`
+- [x] Regression, XOR, spiral, MNIST MLP, and MNIST CNN experiments
 
-## Verify
+## Quickstart
+
+```bash
+make install
+make check
+make examples
+```
+
+Equivalent direct commands:
 
 ```bash
 pytest
 ruff check .
+python examples/run_all.py
 ```
 
-## Examples
+## Experiments
 
 ```bash
 python examples/train_regression.py
 python examples/train_xor.py
 python examples/train_spiral.py
-python examples/run_all.py
-```
-
-Regression demonstrates continuous function fitting, XOR demonstrates nonlinear binary
-classification, and the spiral experiment demonstrates multiclass decision boundaries. The
-scripts save metrics, reports, and figures under `reports/`.
-
-Run the heavier MNIST experiment separately:
-
-```bash
 python examples/train_mnist_mlp.py
 python examples/train_mnist_cnn.py
 ```
 
-The MLP uses 5,000/1,000 images by default. The CNN uses a smaller 1,000/300 subset and a
-single convolution/pooling stage because its NumPy loops prioritize readable gradient logic
-over production speed. Both are framework demonstrations rather than state-of-the-art
-benchmarks.
+MNIST downloads the original IDX files when absent. The MLP uses a 5,000/1,000 subset; the
+readable loop-based CNN uses 1,000/300 images to keep runtime practical.
 
-See [reports/project_summary.md](reports/project_summary.md) for the design overview and
-experiment discussion.
+## Results
+
+| Experiment | Final loss | Accuracy |
+| --- | ---: | ---: |
+| Regression | 0.007498 | - |
+| XOR | 0.000069 | 100.00% |
+| Spiral | 0.015983 | 99.33% |
+| MNIST MLP | 0.333938 | 89.40% |
+| MNIST CNN | 0.476929 | 85.00% |
+
+Full context and artifacts are listed in
+[reports/results_summary.md](reports/results_summary.md).
+
+## Documentation
+
+- [Project summary](reports/project_summary.md)
+- [Architecture](docs/architecture.md)
+- [Concepts review](docs/concepts_review.md)
 
 ## Limitations
 
-This is an educational CPU-only engine without GPU support, vectorized production convolution,
-data augmentation, automatic graph cleanup, or a no-gradient mode. It favors readable
-implementation over production performance.
+This is an educational CPU-only framework. It has no GPU backend, compiled kernels, automatic
+graph cleanup, no-gradient context, data augmentation, or production-speed convolution.
+Optimizer state is not included in saved checkpoints.
 
 ## Future Work
 
-Possible next steps include vectorized `im2col` convolution, more CNN layers, optimizer
-checkpointing, train/evaluation modes, and broader image experiments.
+Natural extensions include vectorized `im2col` convolution, more tensor operations, resumable
+optimizer checkpoints, train/evaluation modes, and deeper image models.
