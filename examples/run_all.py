@@ -31,7 +31,9 @@ def main() -> None:
         )
 
     print()
-    print("MNIST is available separately: python examples/train_mnist_mlp.py")
+    print("Heavier MNIST examples are available separately:")
+    print("  python examples/train_mnist_mlp.py")
+    print("  python examples/train_mnist_cnn.py")
 
 
 if __name__ == "__main__":

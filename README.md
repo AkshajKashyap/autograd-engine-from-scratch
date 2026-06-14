@@ -16,6 +16,7 @@ backpropagation inspectable from scalar operations through complete training loo
 - [x] Deterministic model state dictionaries and NumPy `.npz` persistence
 - [x] Deterministic regression, XOR, and spiral experiments
 - [x] MNIST IDX loading and a subset-based MLP image classifier
+- [x] Reshape/transpose autograd plus readable `Conv2D`, `MaxPool2D`, and `Flatten`
 
 ## Verify
 
@@ -41,22 +42,24 @@ Run the heavier MNIST experiment separately:
 
 ```bash
 python examples/train_mnist_mlp.py
+python examples/train_mnist_cnn.py
 ```
 
-It downloads the original IDX files when needed and trains a small MLP on 5,000 training and
-1,000 test images by default. The subset and short schedule keep the pure NumPy/autograd run
-practical; this is a framework demonstration rather than a state-of-the-art benchmark.
+The MLP uses 5,000/1,000 images by default. The CNN uses a smaller 1,000/300 subset and a
+single convolution/pooling stage because its NumPy loops prioritize readable gradient logic
+over production speed. Both are framework demonstrations rather than state-of-the-art
+benchmarks.
 
 See [reports/project_summary.md](reports/project_summary.md) for the design overview and
 experiment discussion.
 
 ## Limitations
 
-This is an educational CPU-only engine without GPU support, convolutional layers, data
-augmentation, automatic graph cleanup, or a no-gradient mode. It favors readable
+This is an educational CPU-only engine without GPU support, vectorized production convolution,
+data augmentation, automatic graph cleanup, or a no-gradient mode. It favors readable
 implementation over production performance.
 
 ## Future Work
 
-Possible next steps include convolutional layers, optimizer checkpointing, train/evaluation
-modes, and broader experiments on real image datasets.
+Possible next steps include vectorized `im2col` convolution, more CNN layers, optimizer
+checkpointing, train/evaluation modes, and broader image experiments.

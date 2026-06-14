@@ -4,7 +4,19 @@ from autograd_engine.datasets import load_mnist
 from autograd_engine.gradcheck import finite_difference_grad, gradcheck
 from autograd_engine.losses import binary_cross_entropy, cross_entropy, mse_loss, softmax
 from autograd_engine.metrics import binary_accuracy, multiclass_accuracy
-from autograd_engine.nn import Linear, MLP, Module, Parameter, ReLU, Sequential, Sigmoid, Tanh
+from autograd_engine.nn import (
+    Conv2D,
+    Flatten,
+    Linear,
+    MLP,
+    MaxPool2D,
+    Module,
+    Parameter,
+    ReLU,
+    Sequential,
+    Sigmoid,
+    Tanh,
+)
 from autograd_engine.optim import Adam, MomentumSGD, SGD
 from autograd_engine.scalar import Value
 from autograd_engine.serialization import (
@@ -18,11 +30,14 @@ from autograd_engine.training import DataLoader, Dataset, History, TensorDataset
 
 __all__ = [
     "Adam",
+    "Conv2D",
     "DataLoader",
     "Dataset",
+    "Flatten",
     "History",
     "Linear",
     "MLP",
+    "MaxPool2D",
     "Module",
     "MomentumSGD",
     "Parameter",

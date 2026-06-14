@@ -37,6 +37,7 @@ The library includes:
 
 - `Parameter` and recursive `Module` parameter discovery
 - `Linear`, `ReLU`, `Tanh`, `Sigmoid`, `Sequential`, and configurable `MLP` modules
+- `Flatten`, readable NCHW `Conv2D`, and deterministic `MaxPool2D`
 - SGD with weight decay, momentum SGD, and Adam
 - Mean squared error, binary cross-entropy, softmax, and stable multiclass cross-entropy
 - Numerical finite-difference checks for validating analytical gradients
@@ -91,6 +92,17 @@ layer, and three epochs. This keeps a pure Python/NumPy autodiff demonstration a
 while proving that the same engine can train on a real multiclass image dataset. It is not
 configured or optimized for state-of-the-art accuracy.
 
+### MNIST CNN
+
+A second optional MNIST experiment keeps the image grid intact and trains a tiny convolution,
+ReLU, max-pool, and linear classifier. `Conv2D` implements cross-correlation directly over
+spatial windows and accumulates gradients for inputs, kernels, and biases. `MaxPool2D` records
+the first maximum in each window and routes its backward gradient to that location.
+
+The default CNN run uses only 1,000 training and 300 test images for two epochs. This is an
+honest runtime tradeoff: the implementation is designed to make convolution backpropagation
+readable, not to match optimized numerical libraries.
+
 ## Verification
 
 The test suite covers forward values, analytical gradients, broadcasting, reductions, matrix
@@ -106,13 +118,14 @@ and takes longer:
 
 ```bash
 python examples/train_mnist_mlp.py
+python examples/train_mnist_cnn.py
 ```
 
 ## Current Limitations
 
 - CPU-only NumPy execution
-- No convolutional, recurrent, normalization, or dropout layers
-- MNIST uses flattened pixels and an MLP rather than image-aware convolutional features
+- Convolution uses readable spatial loops rather than vectorized `im2col` or compiled kernels
+- No recurrent, normalization, or dropout layers
 - No train/evaluation behavior modes for layers such as dropout or batch normalization
 - Serialization covers model parameters but not optimizer state or resumable checkpoints
 - No graph detachment or no-gradient context
@@ -120,6 +133,6 @@ python examples/train_mnist_mlp.py
 
 ## Possible Next Milestones
 
-Useful extensions would include additional tensor operations, optimizer checkpointing,
-convolutional layers, and richer image experiments. Profiling and graph-lifetime controls
+Useful extensions would include vectorized `im2col` convolution, additional CNN layers,
+optimizer checkpointing, and richer image experiments. Profiling and graph-lifetime controls
 would also make the engine more practical while preserving its readable design.

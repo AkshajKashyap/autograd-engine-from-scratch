@@ -145,6 +145,42 @@ class Tensor:
     def __rmatmul__(self, other: ArrayLike) -> "Tensor":
         return self._coerce(other) @ self
 
+    def reshape(self, *shape: int | tuple[int, ...]) -> "Tensor":
+        """Return a view with a new shape while preserving gradient flow."""
+        target_shape = shape[0] if len(shape) == 1 and isinstance(shape[0], tuple) else shape
+        out = Tensor(self.data.reshape(target_shape), (self,), "reshape")
+
+        def _backward() -> None:
+            self.grad += out.grad.reshape(self.data.shape)
+
+        out._backward = _backward
+        return out
+
+    def transpose(self, *axes: int | tuple[int, ...]) -> "Tensor":
+        """Permute dimensions and invert that permutation during backward."""
+        if len(axes) == 1 and isinstance(axes[0], tuple):
+            permutation = axes[0]
+        else:
+            permutation = axes or tuple(reversed(range(self.data.ndim)))
+        if len(permutation) != self.data.ndim:
+            raise ValueError("transpose axes must include every tensor dimension")
+
+        out = Tensor(self.data.transpose(permutation), (self,), "transpose")
+        inverse_permutation = tuple(np.argsort(permutation))
+
+        def _backward() -> None:
+            self.grad += out.grad.transpose(inverse_permutation)
+
+        out._backward = _backward
+        return out
+
+    @property
+    def T(self) -> "Tensor":
+        """Return the transpose of a two-dimensional tensor."""
+        if self.data.ndim != 2:
+            raise ValueError("Tensor.T is only defined for two-dimensional tensors")
+        return self.transpose(1, 0)
+
     def sum(self, axis: Axis = None, keepdims: bool = False) -> "Tensor":
         out = Tensor(self.data.sum(axis=axis, keepdims=keepdims), (self,), "sum")
 
