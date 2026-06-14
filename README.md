@@ -8,6 +8,6 @@ Build enough of a deep learning framework to understand how backpropagation, ten
 
 ## Current Status
 
-The scalar reverse-mode autodiff engine is complete, and the core NumPy-backed tensor
-autograd engine now supports arithmetic, reductions, matrix multiplication, broadcasting,
-and common nonlinear functions. Neural network layers and optimizers remain future milestones.
+The scalar and NumPy-backed tensor autograd engines are complete. Reusable neural network
+modules and SGD, momentum, and Adam optimizers are now implemented. Small training experiments
+are the next milestone.
