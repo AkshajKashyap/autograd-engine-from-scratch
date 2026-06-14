@@ -40,9 +40,24 @@ The library includes:
 - SGD with weight decay, momentum SGD, and Adam
 - Mean squared error, binary cross-entropy, softmax, and stable multiclass cross-entropy
 - Numerical finite-difference checks for validating analytical gradients
+- `TensorDataset`, seeded mini-batch loading, reusable train/evaluation loops, and metric history
+- Binary and multiclass accuracy metrics
+- Deterministic parameter state dictionaries and non-pickle NumPy `.npz` save/load
 
 All model forward passes are composed from the same public `Tensor` operations used in the
 basic tests.
+
+## Training and Persistence
+
+`TensorDataset` and `DataLoader` provide deterministic in-memory batching without external
+dataset dependencies. `train_epoch` and `evaluate` centralize the repeated mechanics of
+forward passes, loss aggregation, gradient clearing, backpropagation, updates, and optional
+accuracy calculation.
+
+Models can be represented as ordered state dictionaries of copied NumPy arrays. Those states
+can be restored directly or stored in `.npz` archives without pickle. Loading validates both
+parameter keys and shapes, and a same-shaped model reproduces identical predictions after a
+round trip.
 
 ## Experiments
 
@@ -78,14 +93,13 @@ python examples/run_all.py
 
 - CPU-only NumPy execution
 - No convolutional, recurrent, normalization, or dropout layers
-- No data loader, mini-batch abstraction, or train/evaluation modes
-- No model serialization or checkpointing
+- No train/evaluation behavior modes for layers such as dropout or batch normalization
+- Serialization covers model parameters but not optimizer state or resumable checkpoints
 - No graph detachment or no-gradient context
 - Educational implementations are prioritized over memory and runtime optimization
 
 ## Possible Next Milestones
 
-Useful extensions would include additional tensor operations, parameter serialization,
-mini-batch data utilities, convolutional layers, and a small image-classification experiment
-such as MNIST. Profiling and graph-lifetime controls would also make the engine more practical
-while preserving its readable design.
+Useful extensions would include additional tensor operations, optimizer checkpointing,
+convolutional layers, and a real dataset experiment such as MNIST. Profiling and graph-lifetime
+controls would also make the engine more practical while preserving its readable design.

@@ -11,6 +11,9 @@ backpropagation inspectable from scalar operations through complete training loo
 - [x] SGD, momentum SGD, and Adam
 - [x] Regression, binary classification, and multiclass losses
 - [x] Central finite-difference gradient checks
+- [x] Seeded mini-batch data loading and reusable train/evaluation loops
+- [x] Binary and multiclass accuracy metrics
+- [x] Deterministic model state dictionaries and NumPy `.npz` persistence
 - [x] Deterministic regression, XOR, and spiral experiments
 
 ## Verify
@@ -38,11 +41,11 @@ experiment discussion.
 
 ## Limitations
 
-This is an educational CPU-only engine without GPU support, batching utilities, model
-serialization, convolutional layers, or a no-gradient mode. It favors readable implementation
-over production performance.
+This is an educational CPU-only engine without GPU support, convolutional layers, automatic
+graph cleanup, or a no-gradient mode. It favors readable implementation over production
+performance.
 
 ## Future Work
 
-Possible next steps include richer tensor operations, data loaders, model persistence,
-convolutional layers, and experiments on MNIST or similarly sized datasets.
+Possible next steps include richer tensor operations, convolutional layers, train/evaluation
+modes, and experiments on MNIST or similarly sized real datasets.
