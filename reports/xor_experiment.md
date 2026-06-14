@@ -4,6 +4,7 @@ A small MLP with one hidden layer was trained on the XOR truth table.
 
 - Initial BCE: `0.705255`
 - Final BCE: `0.000069`
+- Final accuracy: `100.00%`
 - Optimizer: Adam
 - Training steps: 1000
 

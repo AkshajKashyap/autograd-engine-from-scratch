@@ -1,5 +1,6 @@
 """A small autograd engine built for learning."""
 
+from autograd_engine.gradcheck import finite_difference_grad, gradcheck
 from autograd_engine.losses import binary_cross_entropy, cross_entropy, mse_loss, softmax
 from autograd_engine.nn import Linear, MLP, Module, Parameter, ReLU, Sequential, Sigmoid, Tanh
 from autograd_engine.optim import Adam, MomentumSGD, SGD
@@ -22,6 +23,8 @@ __all__ = [
     "Value",
     "binary_cross_entropy",
     "cross_entropy",
+    "finite_difference_grad",
+    "gradcheck",
     "mse_loss",
     "softmax",
 ]

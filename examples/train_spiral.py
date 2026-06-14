@@ -67,74 +67,99 @@ def classification_accuracy(model: MLP, features: np.ndarray, labels: np.ndarray
     return float(np.mean(predictions == labels))
 
 
-def main() -> None:
+def run_experiment(
+    steps: int = 800,
+    *,
+    write_artifacts: bool = True,
+    verbose: bool = True,
+) -> dict[str, float]:
+    """Train the spiral classifier and return its headline metrics."""
     features, labels = make_spiral_data()
 
     np.random.seed(21)
     initial_model = MLP([2, 32, 32, 3], activation=Tanh)
     initial_loss = cross_entropy(initial_model(Tensor(features)), labels).data.item()
 
-    model, losses = train_spiral(features, labels)
+    model, losses = train_spiral(features, labels, steps=steps)
     final_loss = cross_entropy(model(Tensor(features)), labels).data.item()
     final_accuracy = classification_accuracy(model, features, labels)
 
-    print(f"Initial loss: {initial_loss:.6f}")
-    print(f"Final loss:   {final_loss:.6f}")
-    print(f"Final accuracy: {final_accuracy:.2%}")
+    if verbose:
+        print(f"Initial loss: {initial_loss:.6f}")
+        print(f"Final loss:   {final_loss:.6f}")
+        print(f"Final accuracy: {final_accuracy:.2%}")
 
-    figures_path = ROOT / "reports" / "figures"
-    figures_path.mkdir(parents=True, exist_ok=True)
+    if write_artifacts:
+        figures_path = ROOT / "reports" / "figures"
+        figures_path.mkdir(parents=True, exist_ok=True)
 
-    plt.figure(figsize=(6, 4))
-    plt.plot(losses)
-    plt.xlabel("Training step")
-    plt.ylabel("Cross-entropy loss")
-    plt.title("Spiral classification training")
-    plt.tight_layout()
-    plt.savefig(figures_path / "spiral_loss.png")
-    plt.close()
+        plt.figure(figsize=(6, 4))
+        plt.plot(losses)
+        plt.xlabel("Training step")
+        plt.ylabel("Cross-entropy loss")
+        plt.title("Spiral classification training")
+        plt.tight_layout()
+        plt.savefig(figures_path / "spiral_loss.png")
+        plt.close()
 
-    padding = 0.15
-    x_min, x_max = features[:, 0].min() - padding, features[:, 0].max() + padding
-    y_min, y_max = features[:, 1].min() - padding, features[:, 1].max() + padding
-    grid_x, grid_y = np.meshgrid(
-        np.linspace(x_min, x_max, 250),
-        np.linspace(y_min, y_max, 250),
-    )
-    grid = np.column_stack((grid_x.ravel(), grid_y.ravel()))
-    regions = np.argmax(model(Tensor(grid)).data, axis=1).reshape(grid_x.shape)
-
-    plt.figure(figsize=(6, 5))
-    plt.contourf(grid_x, grid_y, regions, levels=np.arange(4) - 0.5, alpha=0.3)
-    plt.scatter(features[:, 0], features[:, 1], c=labels, s=18, edgecolors="black", linewidths=0.2)
-    plt.xlabel("x1")
-    plt.ylabel("x2")
-    plt.title("Spiral decision boundary")
-    plt.tight_layout()
-    plt.savefig(figures_path / "spiral_decision_boundary.png")
-    plt.close()
-
-    report_path = ROOT / "reports" / "spiral_experiment.md"
-    report_path.write_text(
-        "\n".join(
-            [
-                "# Spiral Classification Experiment",
-                "",
-                "A multilayer perceptron was trained on a deterministic three-class spiral dataset.",
-                "",
-                f"- Initial cross-entropy: `{initial_loss:.6f}`",
-                f"- Final cross-entropy: `{final_loss:.6f}`",
-                f"- Final accuracy: `{final_accuracy:.2%}`",
-                "- Optimizer: Adam",
-                "- Training steps: 800",
-                "",
-                "![Spiral loss](figures/spiral_loss.png)",
-                "",
-                "![Spiral decision boundary](figures/spiral_decision_boundary.png)",
-                "",
-            ]
+        padding = 0.15
+        x_min, x_max = features[:, 0].min() - padding, features[:, 0].max() + padding
+        y_min, y_max = features[:, 1].min() - padding, features[:, 1].max() + padding
+        grid_x, grid_y = np.meshgrid(
+            np.linspace(x_min, x_max, 250),
+            np.linspace(y_min, y_max, 250),
         )
-    )
+        grid = np.column_stack((grid_x.ravel(), grid_y.ravel()))
+        regions = np.argmax(model(Tensor(grid)).data, axis=1).reshape(grid_x.shape)
+
+        plt.figure(figsize=(6, 5))
+        plt.contourf(grid_x, grid_y, regions, levels=np.arange(4) - 0.5, alpha=0.3)
+        plt.scatter(
+            features[:, 0],
+            features[:, 1],
+            c=labels,
+            s=18,
+            edgecolors="black",
+            linewidths=0.2,
+        )
+        plt.xlabel("x1")
+        plt.ylabel("x2")
+        plt.title("Spiral decision boundary")
+        plt.tight_layout()
+        plt.savefig(figures_path / "spiral_decision_boundary.png")
+        plt.close()
+
+        report_path = ROOT / "reports" / "spiral_experiment.md"
+        report_path.write_text(
+            "\n".join(
+                [
+                    "# Spiral Classification Experiment",
+                    "",
+                    "A multilayer perceptron was trained on a deterministic three-class spiral dataset.",
+                    "",
+                    f"- Initial cross-entropy: `{initial_loss:.6f}`",
+                    f"- Final cross-entropy: `{final_loss:.6f}`",
+                    f"- Final accuracy: `{final_accuracy:.2%}`",
+                    "- Optimizer: Adam",
+                    f"- Training steps: {steps}",
+                    "",
+                    "![Spiral loss](figures/spiral_loss.png)",
+                    "",
+                    "![Spiral decision boundary](figures/spiral_decision_boundary.png)",
+                    "",
+                ]
+            )
+        )
+
+    return {
+        "initial_loss": initial_loss,
+        "final_loss": final_loss,
+        "accuracy": final_accuracy,
+    }
+
+
+def main() -> None:
+    run_experiment()
 
 
 if __name__ == "__main__":
