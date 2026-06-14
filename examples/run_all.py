@@ -30,6 +30,9 @@ def main() -> None:
             f"{accuracy_text:>12}"
         )
 
+    print()
+    print("MNIST is available separately: python examples/train_mnist_mlp.py")
+
 
 if __name__ == "__main__":
     main()

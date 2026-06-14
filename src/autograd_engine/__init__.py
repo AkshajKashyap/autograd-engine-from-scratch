@@ -1,5 +1,6 @@
 """A small autograd engine built for learning."""
 
+from autograd_engine.datasets import load_mnist
 from autograd_engine.gradcheck import finite_difference_grad, gradcheck
 from autograd_engine.losses import binary_cross_entropy, cross_entropy, mse_loss, softmax
 from autograd_engine.metrics import binary_accuracy, multiclass_accuracy
@@ -41,6 +42,7 @@ __all__ = [
     "gradcheck",
     "load_state_dict",
     "load_state_dict_from_file",
+    "load_mnist",
     "mse_loss",
     "multiclass_accuracy",
     "save_state_dict",

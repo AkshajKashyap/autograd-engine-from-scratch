@@ -79,6 +79,18 @@ An MLP learns interleaved spiral arms using stable softmax cross-entropy. This e
 multiclass logits, integer labels, deeper networks, and nonlinear decision boundaries. The
 saved visualization makes the learned class regions directly inspectable.
 
+### MNIST MLP
+
+The MNIST experiment downloads and parses the original gzip-compressed IDX files with standard
+library tools and NumPy. A fully connected network then trains through the framework's
+`TensorDataset`, `DataLoader`, reusable train/evaluation loops, cross-entropy loss, Adam,
+accuracy metric, and model serialization.
+
+The default run intentionally uses 5,000 training images, 1,000 test images, one small hidden
+layer, and three epochs. This keeps a pure Python/NumPy autodiff demonstration approachable
+while proving that the same engine can train on a real multiclass image dataset. It is not
+configured or optimized for state-of-the-art accuracy.
+
 ## Verification
 
 The test suite covers forward values, analytical gradients, broadcasting, reductions, matrix
@@ -89,10 +101,18 @@ checks. The deterministic examples can also be run together with:
 python examples/run_all.py
 ```
 
+MNIST remains separate from the quick aggregate runner because it may need a network download
+and takes longer:
+
+```bash
+python examples/train_mnist_mlp.py
+```
+
 ## Current Limitations
 
 - CPU-only NumPy execution
 - No convolutional, recurrent, normalization, or dropout layers
+- MNIST uses flattened pixels and an MLP rather than image-aware convolutional features
 - No train/evaluation behavior modes for layers such as dropout or batch normalization
 - Serialization covers model parameters but not optimizer state or resumable checkpoints
 - No graph detachment or no-gradient context
@@ -101,5 +121,5 @@ python examples/run_all.py
 ## Possible Next Milestones
 
 Useful extensions would include additional tensor operations, optimizer checkpointing,
-convolutional layers, and a real dataset experiment such as MNIST. Profiling and graph-lifetime
-controls would also make the engine more practical while preserving its readable design.
+convolutional layers, and richer image experiments. Profiling and graph-lifetime controls
+would also make the engine more practical while preserving its readable design.
