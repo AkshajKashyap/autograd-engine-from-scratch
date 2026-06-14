@@ -1,7 +1,12 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "autograd-engine-from-scratch"
 version = "0.1.0"
-description = "NumPy-based autograd engine and tiny neural network library from scratch."
+description = "Educational NumPy autograd engine and neural network library built from scratch."
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "numpy",
