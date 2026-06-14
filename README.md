@@ -5,3 +5,8 @@ A NumPy-based autograd engine and tiny neural network library implementing rever
 ## Goal
 
 Build enough of a deep learning framework to understand how backpropagation, tensors, layers, optimizers, and training loops actually work internally.
+
+## Current Status
+
+The first milestone is complete: a scalar reverse-mode autodiff engine with arithmetic
+operations, common nonlinear functions, topological backpropagation, and gradient checks.
